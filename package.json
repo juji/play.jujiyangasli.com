@@ -13,7 +13,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "push": "git add -A; git commit -am ",
-    "postpush": "git push origin master; yarn build; gh-pages -d build"
+    "postpush": "git push origin master; yarn build; printf test.jujiplay.com > build/CNAME; gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
