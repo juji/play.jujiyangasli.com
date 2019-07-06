@@ -55,9 +55,15 @@ export function register(config) {
 }
 
 function registerValidSW(swUrl, config) {
+
+  console.log('registerValidSW')
+
   navigator.serviceWorker
     .register(swUrl)
     .then(registration => {
+
+      console.log('registration', registration)
+
       registration.onupdatefound = () => {
         const installingWorker = registration.installing;
         if (installingWorker == null) {
