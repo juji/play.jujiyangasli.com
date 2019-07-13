@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "gh-pages": "^2.0.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.1",
@@ -14,7 +15,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "push": "git add -A; git commit -am ",
-    "postpush": "git push origin master; yarn build; printf test.jujiplay.com > build/CNAME; gh-pages -d build"
+    "postpush": "git push origin master; yarn build; printf test.jujiplay.com > build/CNAME; yarn ghpage",
+    "ghpage": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
