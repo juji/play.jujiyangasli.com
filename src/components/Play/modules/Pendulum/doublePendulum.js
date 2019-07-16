@@ -60,13 +60,12 @@ DoublePendulum.prototype.init = function(props){
   this.x2 = this.x1 + this.l2 * Math.cos(this.a2);
   this.y2 = this.y1 + this.l2 * Math.sin(this.a2);
 
-  this.maxItt = 5000
+  this.maxItt = 4000;
   this.itt = 0
   this.stop = false;
 
   this.context.fillStyle = '#000000';
   this.context.fillRect(0,0,window.outerWidth,window.outerHeight);
-  // this.context.lineWidth = 0.5;
   this.context.translate((window.outerWidth/2)-.5,(window.outerHeight/2)-.5)
   this.context.strokeStyle = lineColor;
 

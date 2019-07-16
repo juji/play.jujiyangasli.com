@@ -2,8 +2,6 @@
 
 const flockNum = 1;
 const ease = 1000;
-const velocityEase = 21;
-const evadeEase = 10;
 const minDistance = 21;
 const boidWidth = 4;
 const maxVelocity = 21;
@@ -43,6 +41,8 @@ const distance = (p1, p2) => {
 // Rule 1: Boids try to fly towards the centre of mass.
 const rule1 = (flock, i) => {
 
+  const localEase = 5
+
   let center = vectorDiv(
    flock.boids.reduce((a,b,idx) => {
      return idx === i ? a : vectorAdd(a, b.pos)
@@ -56,13 +56,16 @@ const rule1 = (flock, i) => {
       flock.boids[i].pos
     ),
     // ease
-    flock.boids[i].ease * 0.8
+    flock.boids[i].ease * localEase
   )
 }
 
 // Rule 2: Boids try to keep a small distance away from other objects (including other boids).
 const rule2 = (flock, i) => {
+
   const boid = flock.boids[i];
+  const localEase = 10;
+
   return flock.boids.reduce((a,b,idx) => {
 
     if(idx === i) return a;
@@ -70,10 +73,10 @@ const rule2 = (flock, i) => {
     const d = distance(b.pos, boid.pos)
 
     const x = d < minDistance ?
-      (boid.pos[0] - b.pos[0])/evadeEase : a[0];
+      (boid.pos[0] - b.pos[0])/localEase : a[0];
 
     const y = d < minDistance ?
-      (boid.pos[1] - b.pos[1])/evadeEase : a[1];
+      (boid.pos[1] - b.pos[1])/localEase : a[1];
 
     return [x,y]
 
@@ -87,26 +90,50 @@ const rule3 = (flock, i) => {
     return idx === i ? a : vectorAdd(a, b.v)
   },[0,0])
 
+  const localEase = 21;
+
   return vectorDiv(
     vectorMin(
       vectorDiv(sumVel, flock.boids.length-1),
       flock.boids[i].v
     ),
     // flock.boids[i].ease
-    velocityEase
+    localEase
   )
 }
 
 // rule 4: boids tends to go to center of screen
 const rule4 = (flock, i) => {
 
+  const localEase = flock.boids[i].ease
+
   return vectorDiv(
     vectorMin(
       flock.center,
       flock.boids[i].pos
     ),
-    flock.boids[i].ease * 1.5
+    localEase
   )
+}
+
+// rule 4.1: boids avoid center of screen
+const rule41 = (flock, i) => {
+
+  const localEase = flock.boids[i].ease * 0.01
+  const boid = flock.boids[i]
+  const center = flock.center
+  const radius = 144
+
+  const d = distance(center, boid.pos)
+
+  const x = d < radius ?
+    4 * (boid.pos[0] - center[0]) / localEase : 0;
+
+  const y = d < radius ?
+    4 * (boid.pos[1] - center[1]) / localEase : 0;
+
+  return [x,y]
+
 }
 
 // rule 5: boids stay on screen
@@ -188,14 +215,15 @@ Flock.prototype.calculate = function(){
       rule2(this, i),
       rule3(this, i),
       rule4(this, i),
+      rule41(this, i),
       rule5(this, i),
       // rule6(this, i),
     )
 
-    if(Math.abs(this.boids[i].v[0]) > maxVelocity)
-      this.boids[i].v[0] = this.boids[i].v[0] * 0.1
-    if(Math.abs(this.boids[i].v[1]) > maxVelocity)
-      this.boids[i].v[1] = this.boids[i].v[1] * 0.1
+    // if(Math.abs(this.boids[i].v[0]) > maxVelocity)
+    //   this.boids[i].v[0] = this.boids[i].v[0] * 0.1
+    // if(Math.abs(this.boids[i].v[1]) > maxVelocity)
+    //   this.boids[i].v[1] = this.boids[i].v[1] * 0.1
 
     //
     // // const old = [ this.boids[i].pos[0], this.boids[i].pos[1] ]
@@ -203,6 +231,11 @@ Flock.prototype.calculate = function(){
       this.boids[i].pos,
       this.boids[i].v
     )
+
+    if(Math.abs(this.boids[i].v[0]) > maxVelocity)
+      this.boids[i].v[0] = this.boids[i].v[0] * 0.1
+    if(Math.abs(this.boids[i].v[1]) > maxVelocity)
+      this.boids[i].v[1] = this.boids[i].v[1] * 0.1
 
     // console.log(old, this.boids[i].pos)
 
