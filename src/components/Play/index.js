@@ -4,20 +4,11 @@ import Pendulum from './modules/Pendulum'
 import Dejong from './modules/Dejong'
 import Boids from './modules/Boids'
 
-const data = [
-  {
-    id: 'pendulum',
-    component: Pendulum
-  },
-  {
-    id: 'dejong',
-    component: Dejong
-  },
-  {
-    id: 'boids',
-    component: Boids
-  }
-]
+const data = {
+  pendulum: Pendulum,
+  dejong: Dejong,
+  boids: Boids,
+}
 
 export default props => {
 
@@ -25,7 +16,7 @@ export default props => {
   if(!match || !match.params  || !match.params.id) return <div className="play"></div>
 
   const Module = useMemo(
-    () => data.find(v => v.id === match.params.id),
+    () => data[match.params.id],
     [match.params.id]
   )
 
@@ -35,7 +26,7 @@ export default props => {
     <div className="play-container">
       <Link to="/" className="back">&times;</Link>
       {/* <a href="/" className="back">&times;</a> */}
-      <Module.component />
+      <Module />
     </div>
   </div>
 }
